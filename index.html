@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradingRoad-Ai | Analista de Trading IA Wyckoff/SMC</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.4.0",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "recharts": "https://esm.sh/recharts@^2.15.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "lightweight-charts": "https://esm.sh/lightweight-charts@^4.2.0",
+    "pako": "https://esm.sh/pako@^2.1.0"
+  }
+}
+</script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      /* slate-900 */
+      color: #f1f5f9;
+      /* slate-100 */
+    }
+
+    /* Custom scrollbar for better aesthetics */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+      /* slate-800 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      /* slate-700 */
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+      /* slate-600 */
+    }
+
+    /* Lightweight Charts tooltip override if needed */
+    .tv-lightweight-charts-tooltip-container {
+      background-color: #1e293b !important;
+      /* slate-800 */
+      color: #f1f5f9 !important;
+      /* slate-100 */
+      border: 1px solid #334155 !important;
+      /* slate-700 */
+    }
+
+    /* Hide TradingView logos and attribution */
+    .tv-lightweight-charts__legend,
+    .tv-lightweight-charts__legend-source-item,
+    [data-name="legend-source-item"],
+    .tv-chart-legend,
+    .tv-logo,
+    .tv-lightweight-charts__legend-wrapper,
+    div[class*="legend"],
+    div[class*="source-item"],
+    a[href*="tradingview"],
+    a[href*="trading-view"],
+    div[data-name*="legend"],
+    div[data-name*="source"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* Additional aggressive hiding for dynamic content */
+    [class*="tv-"] [href*="tradingview"],
+    [class*="tv-"] [href*="trading-view"] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-900 text-slate-100">
+  <div id="root"></div>
+  <script>
+    // PRODUCTION BUILD: API keys should be provided by users, not embedded
+    // Users need to configure their own API keys through the UI
+    window.process = {
+      env: {}
+    };
+  </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
