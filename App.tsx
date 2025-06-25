@@ -235,8 +235,9 @@ const App: React.FC = () => {
   useEffect(() => {
     setIsMobile(typeof navigator !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent));
     let keyFromEnv: string | undefined = undefined;
-    if (typeof window !== 'undefined' && window.process && window.process.env && typeof window.process.env.API_KEY === 'string') {
-      keyFromEnv = window.process.env.API_KEY;
+    // En Vite, las variables de entorno se acceden con import.meta.env.VITE_GEMINI_API_KEY
+    if (import.meta.env.VITE_GEMINI_API_KEY) {
+      keyFromEnv = import.meta.env.VITE_GEMINI_API_KEY;
     }
     if (keyFromEnv && keyFromEnv !== "TU_CLAVE_API_DE_GEMINI_AQUI") {
       setApiKey(keyFromEnv);
@@ -244,7 +245,7 @@ const App: React.FC = () => {
     } else {
       setApiKey(null);
       setApiKeyPresent(false);
-      console.warn("Gemini API Key (API_KEY) is not set or is the placeholder value. AI analysis will be disabled.");
+      console.warn("Gemini API Key (VITE_GEMINI_API_KEY) is not set or is the placeholder value. AI analysis will be disabled.");
     }
   }, []);
 

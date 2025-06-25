@@ -54,7 +54,7 @@ const CRYPTO_PROVIDERS = {
   binance: {
     name: 'Binance Futures',
     historicalApi: (symbol: string, interval: string, limit: number) =>
-      `/api/binance/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
+      `https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
     formatSymbol: (s: string) => s.replace(/[^A-Z0-9]/g, '').toUpperCase(),
     parseHistorical: (data: any[]) => {
       return data.map((k: any) => ({
@@ -70,7 +70,7 @@ const CRYPTO_PROVIDERS = {
   bingx: {
     name: 'BingX Futures',
     historicalApi: (symbol: string, interval: string, limit: number) =>
-      `/api/bingx/openApi/swap/v2/quote/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
+      `https://open-api.bingx.com/openApi/swap/v2/quote/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`,
     formatSymbol: (s: string) => {
       // Corregir formato de símbolo: ETH/USDT -> ETH-USDT
       return s.replace(/[-/]/g, '-').toUpperCase();
