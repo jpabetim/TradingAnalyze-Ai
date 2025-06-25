@@ -881,6 +881,13 @@ const RealTimeTradingChart: React.FC<RealTimeTradingChartProps> = ({
   useEffect(() => {
     if (!chartRef.current || !candlestickSeriesRef.current) return;
 
+    // DEBUG: Ver los puntos clave recibidos
+    if (analysisResult && analysisResult.puntos_clave_grafico) {
+      console.log('🟢 puntos_clave_grafico recibidos:', analysisResult.puntos_clave_grafico);
+    } else {
+      console.log('🔴 No hay puntos_clave_grafico en analysisResult:', analysisResult);
+    }
+
     // Limpiar líneas de análisis anteriores
     analysisLinesRef.current.forEach(line => {
       if (candlestickSeriesRef.current && line) {
