@@ -879,11 +879,23 @@ const RealTimeTradingChart: React.FC<RealTimeTradingChartProps> = ({
 
   // Draw analysis results with proper styling
   useEffect(() => {
-    if (!chartRef.current || !candlestickSeriesRef.current) return;
+    console.log('🔍 DEBUG useEffect analysis triggered:', {
+      hasChartRef: !!chartRef.current,
+      hasCandlestickRef: !!candlestickSeriesRef.current,
+      hasAnalysisResult: !!analysisResult,
+      showAiAnalysisDrawings,
+      analysisOpacity
+    });
+
+    if (!chartRef.current || !candlestickSeriesRef.current) {
+      console.log('🚫 Early return: Chart refs not ready');
+      return;
+    }
 
     // DEBUG: Ver los puntos clave recibidos
     if (analysisResult && analysisResult.puntos_clave_grafico) {
       console.log('🟢 puntos_clave_grafico recibidos:', analysisResult.puntos_clave_grafico);
+      console.log('🟢 showAiAnalysisDrawings:', showAiAnalysisDrawings);
     } else {
       console.log('🔴 No hay puntos_clave_grafico en analysisResult:', analysisResult);
     }
