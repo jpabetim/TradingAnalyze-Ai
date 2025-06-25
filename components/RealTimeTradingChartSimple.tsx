@@ -896,6 +896,11 @@ const RealTimeTradingChart: React.FC<RealTimeTradingChartProps> = ({
     if (analysisResult && analysisResult.puntos_clave_grafico) {
       console.log('🟢 puntos_clave_grafico recibidos:', analysisResult.puntos_clave_grafico);
       console.log('🟢 showAiAnalysisDrawings:', showAiAnalysisDrawings);
+      
+      if (!showAiAnalysisDrawings) {
+        console.log('❌ showAiAnalysisDrawings está en FALSE - No se dibujarán los puntos');
+        return;
+      }
     } else {
       console.log('🔴 No hay puntos_clave_grafico en analysisResult:', analysisResult);
     }
