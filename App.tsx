@@ -593,63 +593,69 @@ const App: React.FC = () => {
         onClose={() => setShowApiKeyManager(false)}
       />
 
-      <header className={`p-2 sm:p-3 shadow-md flex justify-between items-center ${theme === 'dark' ? 'bg-slate-800' : 'bg-white border-b border-gray-200'}`}>
-        <h1 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-sky-400' : 'text-sky-600'}`}>TradingRoad-Ai</h1>
+      <header className={`p-1.5 sm:p-2 md:p-3 shadow-md ${theme === 'dark' ? 'bg-slate-800' : 'bg-white border-b border-gray-200'}`}>
+        {/* Layout móvil: título y controles apilados verticalmente */}
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-2 lg:gap-0">
+          <h1 className={`text-base sm:text-lg md:text-xl font-bold ${theme === 'dark' ? 'text-sky-400' : 'text-sky-600'} text-center lg:text-left`}>TradingRoad-Ai</h1>
 
-        {/* Controles centrales - Temporalidad y Velas */}
-        <div className="flex items-center gap-3">
-          {/* Temporalidades */}
-          <div className="flex items-center gap-2">
-            <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'}`}>Temporalidad:</label>
-            <select
-              value={timeframe}
-              onChange={(e) => setTimeframe(e.target.value)}
-              className={`px-2 py-1 text-xs rounded border ${theme === 'dark'
-                ? 'bg-slate-700 border-slate-600 text-white'
-                : 'bg-white border-gray-300 text-black'
-                }`}
-            >
-              {QUICK_SELECT_TIMEFRAMES.map(tf => (
-                <option key={tf} value={tf}>{tf}</option>
-              ))}
-            </select>
-          </div>
+          {/* Controles centrales - Temporalidad y Velas */}
+          <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
+            {/* Temporalidades */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'} hidden sm:block`}>Temporalidad:</label>
+              <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'} sm:hidden`}>TF:</label>
+              <select
+                value={timeframe}
+                onChange={(e) => setTimeframe(e.target.value)}
+                className={`px-1.5 sm:px-2 py-1 text-xs rounded border ${theme === 'dark'
+                  ? 'bg-slate-700 border-slate-600 text-white'
+                  : 'bg-white border-gray-300 text-black'
+                  }`}
+              >
+                {QUICK_SELECT_TIMEFRAMES.map(tf => (
+                  <option key={tf} value={tf}>{tf}</option>
+                ))}
+              </select>
+            </div>
 
-          {/* Separador */}
-          <div className={`h-6 w-px ${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-300'}`}></div>
+            {/* Separador */}
+            <div className={`h-6 w-px ${theme === 'dark' ? 'bg-slate-600' : 'bg-gray-300'} hidden sm:block`}></div>
 
-          {/* Número de velas */}
-          <div className="flex items-center gap-2">
-            <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'}`}>Velas:</label>
-            <select
-              value={candleLimit}
-              onChange={(e) => setCandleLimit(Number(e.target.value))}
-              className={`px-2 py-1 text-xs rounded border ${theme === 'dark'
-                ? 'bg-slate-700 border-slate-600 text-white'
-                : 'bg-white border-gray-300 text-black'
-                }`}
-            >
-              {[100, 200, 300, 500, 1000, 1500, 2000].map(limit => (
-                <option key={limit} value={limit}>{limit}</option>
-              ))}
-            </select>
+            {/* Número de velas */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'} hidden sm:block`}>Velas:</label>
+              <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-gray-700'} sm:hidden`}>N:</label>
+              <select
+                value={candleLimit}
+                onChange={(e) => setCandleLimit(Number(e.target.value))}
+                className={`px-1.5 sm:px-2 py-1 text-xs rounded border ${theme === 'dark'
+                  ? 'bg-slate-700 border-slate-600 text-white'
+                  : 'bg-white border-gray-300 text-black'
+                  }`}
+              >
+                {[100, 200, 300, 500, 1000, 1500, 2000].map(limit => (
+                  <option key={limit} value={limit}>{limit}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center justify-center lg:justify-end gap-1 sm:gap-2">
           <button
             onClick={() => setIsPanelVisible(!isPanelVisible)}
             aria-label={isPanelVisible ? 'Ocultar panel de controles' : 'Mostrar panel de controles'}
-            className={`p-1.5 sm:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`p-1 sm:p-1.5 md:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
           >
-            {isPanelVisible ? 'Ocultar' : 'Mostrar'}
+            <span className="hidden sm:inline">{isPanelVisible ? 'Ocultar' : 'Mostrar'}</span>
+            <span className="sm:hidden">{isPanelVisible ? '🙈' : '👁️'}</span>
           </button>
 
           <button
             onClick={() => setShowPricePath(!showPricePath)}
             title={showPricePath ? 'Ocultar Camino Probable' : 'Mostrar Camino Probable'}
             aria-label={showPricePath ? 'Ocultar Camino Probable del Precio' : 'Mostrar Camino Probable del Precio'}
-            className={`p-1.5 sm:p-2 rounded text-xs transition-colors ${showPricePath
+            className={`p-1 sm:p-1.5 md:p-2 rounded text-xs transition-colors ${showPricePath
               ? (theme === 'dark' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white')
               : (theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700')
               }`}
@@ -661,7 +667,7 @@ const App: React.FC = () => {
             onClick={() => setDisplaySettingsDialogOpen(true)}
             title="Configuración de Visualización"
             aria-label="Abrir Configuración de Visualización"
-            className={`p-1.5 sm:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`p-1 sm:p-1.5 md:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
@@ -671,7 +677,7 @@ const App: React.FC = () => {
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             title={`Cambiar a tema ${theme === 'light' ? 'oscuro' : 'claro'}`}
             aria-label={`Cambiar a tema ${theme === 'light' ? 'oscuro' : 'claro'}`}
-            className={`p-1.5 sm:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`p-1 sm:p-1.5 md:p-2 rounded text-xs transition-colors ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
           >
             {theme === 'light' ? (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
@@ -690,10 +696,10 @@ const App: React.FC = () => {
 
 
 
-      <main className="flex-grow flex flex-col md:flex-row p-2 sm:p-4 gap-2 sm:gap-4 overflow-y-auto">
-        <div className={`w-full flex-1 flex flex-col gap-2 sm:gap-4 overflow-hidden order-1 ${isPanelVisible ? 'md:order-2' : 'md:order-1'}`}>
+      <main className="flex-grow flex flex-col lg:flex-row p-1 sm:p-2 md:p-4 gap-1 sm:gap-2 md:gap-4 overflow-y-auto">
+        <div className={`w-full flex-1 flex flex-col gap-1 sm:gap-2 md:gap-4 overflow-hidden order-1 ${isPanelVisible ? 'lg:order-2' : 'lg:order-1'}`}>
           {/* Chart principal */}
-          <div className={`flex-grow min-h-[300px] sm:min-h-[400px] md:min-h-0 shadow-lg rounded-lg overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+          <div className={`flex-grow min-h-[220px] sm:min-h-[300px] md:min-h-[400px] lg:min-h-0 shadow-lg rounded-lg overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
             <RealTimeTradingChart
               dataSource={dataSource}
               symbol={actualSymbol}
@@ -745,9 +751,9 @@ const App: React.FC = () => {
         </div>
         <div
           id="controls-analysis-panel"
-          className={`w-full md:w-80 lg:w-[360px] xl:w-[400px] flex-none flex flex-col gap-2 sm:gap-4 overflow-y-auto order-2 md:order-1 ${!isPanelVisible ? 'hidden' : ''}`}
+          className={`w-full lg:w-80 xl:w-[360px] 2xl:w-[400px] flex-none flex flex-col gap-1 sm:gap-2 md:gap-4 overflow-y-auto order-2 lg:order-1 ${!isPanelVisible ? 'hidden' : ''}`}
         >
-          <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} p-1 rounded-lg shadow-md flex-shrink-0 order-1 md:order-none`}>
+          <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} p-1 sm:p-2 rounded-lg shadow-md flex-shrink-0 order-1 lg:order-none`}>
             <ControlsPanel
               symbolInput={symbolInput} setSymbolInput={handleMultiAssetSymbolChange}
               dataSource={dataSource} setDataSource={handleMultiAssetDataSourceChange}
@@ -764,7 +770,7 @@ const App: React.FC = () => {
             />
           </div>
 
-          <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} rounded-lg shadow-md flex-grow flex flex-col order-2 md:order-none`}>
+          <div className={`${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} rounded-lg shadow-md flex-grow flex flex-col order-2 lg:order-none min-h-0`}>
             <AnalysisPanel
               panelMode={analysisPanelMode}
               analysisResult={analysisResult}

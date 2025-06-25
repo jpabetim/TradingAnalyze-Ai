@@ -143,10 +143,10 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
         return categories;
     };
 
-    // Get available data sources for current instrument type - Show all exchanges always
+    // Get available data sources for current instrument type - Hide BingX due to CORS issues in production
     const getAvailableDataSources = (): DataSource[] => {
-        // Mostrar todos los exchanges/providers siempre, independientemente del tipo de instrumento
-        return ['binance', 'bingx', 'alphavantage', 'twelvedata', 'yfinance'];
+        // Ocultar BingX temporalmente debido a problemas de CORS en producción
+        return ['binance', 'alphavantage', 'twelvedata', 'yfinance'];
     };
 
     const availableSymbols = getAvailableSymbols();
@@ -197,25 +197,28 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
     };
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
             {/* Instrument Type Selector */}
             <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                     Tipo de Activo
                 </label>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-2 gap-0.5 sm:gap-1">
                     {(['crypto', 'forex', 'commodities', 'indices'] as const).map((type) => (
                         <button
                             key={type}
                             onClick={() => onInstrumentTypeChange(type)}
-                            className={`px-2 py-1 text-xs rounded transition-colors ${instrumentType === type
+                            className={`px-1.5 sm:px-2 py-1 text-xs rounded transition-colors ${instrumentType === type
                                 ? 'bg-sky-600 text-white'
                                 : 'bg-slate-600 text-slate-200 hover:bg-slate-500'
                                 }`}
                         >
-                            {getInstrumentIcon(type)} {type === 'crypto' ? 'Crypto' :
+                            {getInstrumentIcon(type)} <span className="hidden sm:inline">{type === 'crypto' ? 'Crypto' :
                                 type === 'forex' ? 'Forex' :
-                                    type === 'commodities' ? 'Materias P.' : 'Índices'}
+                                    type === 'commodities' ? 'Materias P.' : 'Índices'}</span>
+                            <span className="sm:hidden">{type === 'crypto' ? 'Crypto' :
+                                type === 'forex' ? 'FX' :
+                                    type === 'commodities' ? 'Materias' : 'Índices'}</span>
                         </button>
                     ))}
                 </div>
@@ -247,7 +250,7 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
                     Símbolo
                     {favorites.length > 0 && (
                         <span className="ml-2 text-xs text-yellow-400">
-                            ⭐ {favorites.length} favorito{favorites.length !== 1 ? 's' : ''}
+                            ⭐ {favorites.length} <span className="hidden sm:inline">favorito{favorites.length !== 1 ? 's' : ''}</span>
                         </span>
                     )}
                 </label>
@@ -255,17 +258,17 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
                     className="w-full px-2 py-1 text-xs bg-slate-600 border border-slate-500 rounded text-white cursor-pointer hover:bg-slate-500 flex justify-between items-center"
                     onClick={() => setIsOpen(!isOpen)}
                 >
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 truncate">
                         {isFavorite(symbol) && <span className="text-yellow-400">⭐</span>}
                         {symbol || 'Seleccionar símbolo'}
                     </span>
-                    <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                    <span className={`transform transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
                         ▼
                     </span>
                 </div>
 
                 {isOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-slate-700 border border-slate-500 rounded shadow-lg z-10 max-h-60 overflow-hidden">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-slate-700 border border-slate-500 rounded shadow-lg z-10 max-h-48 sm:max-h-60 overflow-hidden">
                         {/* Search Box */}
                         <div className="p-2 border-b border-slate-500">
                             <input
@@ -279,7 +282,7 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
                         </div>
 
                         {/* Symbol List */}
-                        <div className="overflow-y-auto max-h-40">
+                        <div className="overflow-y-auto max-h-32 sm:max-h-40">
                             {filteredSymbols.length === 0 ? (
                                 <div className="p-2 text-xs text-slate-400 text-center">
                                     No se encontraron símbolos
@@ -296,13 +299,13 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
                                                 className="px-2 py-1 text-xs text-white hover:bg-slate-600 cursor-pointer flex justify-between items-center group"
                                                 onClick={() => handleSymbolSelect(symbolOption)}
                                             >
-                                                <span className="flex items-center gap-1">
+                                                <span className="flex items-center gap-1 truncate">
                                                     {isFavorite(symbolOption) && <span className="text-yellow-400">⭐</span>}
                                                     {symbolOption}
                                                 </span>
                                                 <button
                                                     onClick={(e) => toggleFavorite(symbolOption, e)}
-                                                    className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all ${isFavorite(symbolOption)
+                                                    className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all flex-shrink-0 ${isFavorite(symbolOption)
                                                             ? 'text-yellow-400 hover:text-yellow-300'
                                                             : 'text-slate-400 hover:text-yellow-400'
                                                         }`}
@@ -323,8 +326,8 @@ const SymbolSelector: React.FC<SymbolSelectorProps> = ({
             {/* Current selection info */}
             {symbol && (
                 <div className="text-xs text-slate-400">
-                    <span className="flex items-center gap-1">
-                        {getInstrumentIcon(instrumentType)} {instrumentType.toUpperCase()} • {getDataSourceDisplayName(dataSource)}
+                    <span className="flex items-center gap-1 truncate">
+                        {getInstrumentIcon(instrumentType)} {instrumentType.toUpperCase()} • <span className="truncate">{getDataSourceDisplayName(dataSource)}</span>
                         {isFavorite(symbol) && <span className="text-yellow-400 ml-1">⭐</span>}
                     </span>
                 </div>

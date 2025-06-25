@@ -1,7 +1,7 @@
 
 
 import React, { useRef, useEffect, useState } from 'react';
-import { GeminiAnalysisResult, TradeSetup, ScenarioAnalysis, AnalysisPointType, FibonacciAnalysis, FibonacciLevel } from '../types';
+import { GeminiAnalysisResult, TradeSetup, AnalysisPointType, FibonacciAnalysis, FibonacciLevel } from '../types';
 import { AnalysisPanelMode, ChatMessage } from '../App';
 
 interface AnalysisPanelProps {
@@ -20,14 +20,14 @@ interface AnalysisPanelProps {
 }
 
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <h3 className="text-md sm:text-lg font-semibold mt-3 sm:mt-4 mb-1.5 sm:mb-2 text-sky-400 border-b border-slate-700 pb-1">{children}</h3>
+  <h3 className="text-xs sm:text-sm md:text-md lg:text-lg font-semibold mt-2 sm:mt-3 md:mt-4 mb-1 sm:mb-1.5 md:mb-2 text-sky-400 border-b border-slate-700 pb-1">{children}</h3>
 );
 
 const DetailItem: React.FC<{ label: string; value?: string | number | null; isCode?: boolean; valueClassName?: string }> = ({ label, value, isCode = false, valueClassName = "" }) => (
   value || value === 0 ? (
-    <p className="text-xs sm:text-sm text-slate-300">
+    <p className="text-xs text-slate-300 break-words">
       <span className="font-medium text-slate-100">{label}:</span>{' '}
-      {isCode ? <code className="text-xs bg-slate-600 p-0.5 sm:p-1 rounded">{value}</code> : <span className={valueClassName}>{value}</span>}
+      {isCode ? <code className="text-xs bg-slate-600 p-0.5 sm:p-1 rounded break-all">{value}</code> : <span className={`${valueClassName} break-words`}>{value}</span>}
     </p>
   ) : null
 );
@@ -38,21 +38,32 @@ const TradeSetupDisplay: React.FC<{ setup: TradeSetup | undefined, isMobile: boo
     return <p className="text-xs sm:text-sm text-slate-400 italic">No se identificó una configuración de trade específica.</p>;
   }
   return (
-    <div className="space-y-1 mt-1 p-2 sm:p-3 bg-slate-700/50 rounded-md">
+    <div className="space-y-1 mt-1 p-1.5 sm:p-2 md:p-3 bg-slate-700/50 rounded-md">
       <DetailItem label="Tipo" value={setup.tipo?.toUpperCase()} />
-      {!isMobile && <DetailItem label="Condición de Entrada" value={setup.descripcion_entrada} />}
-      <DetailItem label="Precio de Entrada Ideal" value={setup.punto_entrada_ideal ? `$${setup.punto_entrada_ideal.toFixed(Math.abs(setup.punto_entrada_ideal) < 1 ? 4 : 2)}` : undefined} />
-      {!isMobile && <DetailItem label="Zona de Entrada" value={setup.zona_entrada ? `[$${setup.zona_entrada[0].toFixed(Math.abs(setup.zona_entrada[0]) < 1 ? 4 : 2)} - $${setup.zona_entrada[1].toFixed(Math.abs(setup.zona_entrada[1]) < 1 ? 4 : 2)}]` : undefined} />}
+      {!isMobile && <DetailItem label="Condición" value={setup.descripcion_entrada} />}
+      <DetailItem label="Entrada Ideal" value={setup.punto_entrada_ideal ? `$${setup.punto_entrada_ideal.toFixed(Math.abs(setup.punto_entrada_ideal) < 1 ? 4 : 2)}` : undefined} />
+      {setup.zona_entrada && (
+        <DetailItem 
+          label={isMobile ? "Zona" : "Zona de Entrada"} 
+          value={`[$${setup.zona_entrada[0].toFixed(Math.abs(setup.zona_entrada[0]) < 1 ? 4 : 2)} - $${setup.zona_entrada[1].toFixed(Math.abs(setup.zona_entrada[1]) < 1 ? 4 : 2)}]`} 
+        />
+      )}
       <DetailItem label="Stop Loss" value={setup.stop_loss ? `$${setup.stop_loss.toFixed(Math.abs(setup.stop_loss) < 1 ? 4 : 2)}` : undefined} />
-      <DetailItem label="Take Profit 1" value={setup.take_profit_1 ? `$${setup.take_profit_1.toFixed(Math.abs(setup.take_profit_1) < 1 ? 4 : 2)}` : undefined} />
-      {!isMobile && setup.take_profit_2 && <DetailItem label="Take Profit 2" value={`$${setup.take_profit_2.toFixed(Math.abs(setup.take_profit_2) < 1 ? 4 : 2)}`} />}
-      {!isMobile && setup.take_profit_3 && <DetailItem label="Take Profit 3" value={`$${setup.take_profit_3.toFixed(Math.abs(setup.take_profit_3) < 1 ? 4 : 2)}`} />}
-      {setup.razon_fundamental && <p className="text-xs sm:text-sm text-slate-300 mt-1"><span className="font-medium text-slate-100">Razón:</span> {setup.razon_fundamental}</p>}
+      <DetailItem label="TP1" value={setup.take_profit_1 ? `$${setup.take_profit_1.toFixed(Math.abs(setup.take_profit_1) < 1 ? 4 : 2)}` : undefined} />
+      {setup.take_profit_2 && <DetailItem label="TP2" value={`$${setup.take_profit_2.toFixed(Math.abs(setup.take_profit_2) < 1 ? 4 : 2)}`} />}
+      {!isMobile && setup.take_profit_3 && <DetailItem label="TP3" value={`$${setup.take_profit_3.toFixed(Math.abs(setup.take_profit_3) < 1 ? 4 : 2)}`} />}
+      {setup.razon_fundamental && (
+        <p className="text-xs sm:text-sm text-slate-300 mt-1 break-words">
+          <span className="font-medium text-slate-100">Razón:</span> {setup.razon_fundamental}
+        </p>
+      )}
       {!isMobile && setup.confirmaciones_adicionales && setup.confirmaciones_adicionales.length > 0 && (
         <DetailItem label="Confirmaciones" value={setup.confirmaciones_adicionales.join(', ')} />
       )}
-      {!isMobile && <DetailItem label="Riesgo/Beneficio" value={setup.ratio_riesgo_beneficio} />}
-      <DetailItem label="Confianza" value={setup.calificacion_confianza} />
+      <div className="grid grid-cols-2 gap-2 mt-1">
+        <DetailItem label="R/R" value={setup.ratio_riesgo_beneficio} />
+        <DetailItem label="Confianza" value={setup.calificacion_confianza} />
+      </div>
     </div>
   );
 };
@@ -152,21 +163,21 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   };
 
   const StatusDisplayWrapper: React.FC<{ title: string; children: React.ReactNode; titleColor?: string }> = ({ title, children, titleColor = "text-sky-400" }) => (
-    <div className="p-3 sm:p-4 bg-slate-800 rounded-lg shadow h-full">
-      <h2 className={`text-lg sm:text-xl font-semibold mb-2 ${titleColor}`}>{title}</h2>
-      <div className="text-xs sm:text-sm text-slate-300">{children}</div>
+    <div className="p-2 sm:p-3 md:p-4 bg-slate-800 rounded-lg shadow h-full">
+      <h2 className={`text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-1.5 sm:mb-2 ${titleColor}`}>{title}</h2>
+      <div className="text-xs text-slate-300 overflow-y-auto">{children}</div>
     </div>
   );
 
   const renderAnalysisContent = () => {
     if (analysisLoading) {
-      return <div className="p-3 sm:p-4 text-center">Cargando análisis...</div>;
+      return <div className="p-2 sm:p-3 md:p-4 text-center">Cargando análisis...</div>;
     }
     if (analysisError) {
-      return <div className="p-3 sm:p-4 text-red-400">Error en Análisis: {analysisError}</div>;
+      return <div className="p-2 sm:p-3 md:p-4 text-red-400 text-xs sm:text-sm break-words">Error en Análisis: {analysisError}</div>;
     }
     if (!analysisResult) {
-      return <div className="p-3 sm:p-4 text-center">Selecciona "Análisis IA" para obtener un análisis técnico.</div>;
+      return <div className="p-2 sm:p-3 md:p-4 text-center text-xs sm:text-sm">Selecciona "Análisis IA" para obtener un análisis técnico.</div>;
     }
 
     const primaryScenario = analysisResult.escenarios_probables?.find(s => s.probabilidad === 'alta') || analysisResult.escenarios_probables?.[0];
@@ -179,14 +190,14 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
     const activeSignalColorClass = activeSignalColorMap[activeSignalType?.toLowerCase() || ''] || 'text-slate-300';
 
     return (
-      <div className="p-3 sm:p-4">
-        <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-sky-400">Resultados del Análisis IA</h2>
+      <div className="p-2 sm:p-3 md:p-4 overflow-y-auto">
+        <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-1.5 sm:mb-2 md:mb-3 text-sky-400">Resultados del Análisis IA</h2>
         {!isMobile && primaryScenario && (
           <>
             <SectionTitle>Escenario Principal</SectionTitle>
-            <div className="p-2 sm:p-3 bg-slate-700 rounded-md">
-              <p className="text-xs sm:text-sm font-semibold text-slate-100">{primaryScenario.nombre_escenario}</p>
-              <p className="text-xs text-slate-300 mt-1">{primaryScenario.descripcion_detallada}</p>
+            <div className="p-1.5 sm:p-2 md:p-3 bg-slate-700 rounded-md">
+              <p className="text-xs font-semibold text-slate-100 break-words">{primaryScenario.nombre_escenario}</p>
+              <p className="text-xs text-slate-300 mt-1 break-words">{primaryScenario.descripcion_detallada}</p>
               {primaryScenario.niveles_clave_de_invalidacion && (
                 <p className="text-xs text-slate-400 mt-1">Invalidación: {primaryScenario.niveles_clave_de_invalidacion}</p>
               )}
@@ -316,13 +327,14 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
 
     return (
       <div className={`flex flex-col h-full ${chatContainerBg} ${chatTextColor}`}>
-        <div className={`flex justify-between items-center p-3 sm:p-4 border-b ${inputBorderColor} flex-shrink-0`}>
+        <div className={`flex justify-between items-center p-2 sm:p-3 md:p-4 border-b ${inputBorderColor} flex-shrink-0`}>
           <div className="flex items-center space-x-2">
-            <h2 className="text-lg sm:text-xl font-semibold text-sky-400">TradeGuru AI</h2>
+            <h2 className="text-base sm:text-lg md:text-xl font-semibold text-sky-400">TradeGuru AI</h2>
             {apiKeyPresent && (
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-400 font-medium">Con Visión del Gráfico</span>
+                <span className="text-xs text-green-400 font-medium hidden sm:inline">Con Visión del Gráfico</span>
+                <span className="text-xs text-green-400 font-medium sm:hidden">📊</span>
               </div>
             )}
           </div>
@@ -340,43 +352,42 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             </button>
           )}
         </div>
-        <div className="flex-grow p-3 sm:p-4 space-y-3 overflow-y-auto">
+        <div className="flex-grow p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 overflow-y-auto">
           {!apiKeyPresent && (
-            <div className="p-3 text-sm text-yellow-300 bg-yellow-800 bg-opacity-50 rounded-lg border border-yellow-600">
+            <div className="p-2 sm:p-3 text-xs sm:text-sm text-yellow-300 bg-yellow-800 bg-opacity-50 rounded-lg border border-yellow-600">
               Clave API no configurada. Las funciones de Chat IA están deshabilitadas.
             </div>
           )}
           {apiKeyPresent && chatMessages.length === 0 && (
-            <div className="p-4 text-sm text-slate-300 bg-slate-700/50 rounded-lg border border-slate-600">
-              <div className="flex items-start space-x-3">
+            <div className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm text-slate-300 bg-slate-700/50 rounded-lg border border-slate-600">
+              <div className="flex items-start space-x-2 sm:space-x-3">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-blue-600 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 text-white">
+                  <div className="w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-sky-500 to-blue-600 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-3 sm:w-4 h-3 sm:h-4 text-white">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sky-400 mb-2">🧠 TradeGuru AI - Analista con Visión Completa</h3>
-                  <p className="mb-3">Puedo ver y analizar:</p>
-                  <ul className="text-xs space-y-1 text-slate-400">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sky-400 mb-1 sm:mb-2 text-xs sm:text-sm">🧠 TradeGuru AI</h3>
+                  {!isMobile && <p className="mb-2 sm:mb-3">Puedo ver y analizar:</p>}
+                  <ul className="text-xs space-y-0.5 sm:space-y-1 text-slate-400">
                     <li>• 📊 El gráfico actual de {analysisResult?.analisis_general?.simbolo || 'tu símbolo'}</li>
-                    <li>• 🎯 Todos los niveles y zonas identificadas en el análisis</li>
-                    <li>• 📈 Las medias móviles y configuraciones activas</li>
-                    <li>• 🔍 Los POIs, FVGs, y estructuras de mercado dibujadas</li>
-                    <li>• 💡 El contexto completo del análisis técnico realizado</li>
+                    {!isMobile && <li>• 🎯 Todos los niveles y zonas identificadas</li>}
+                    {!isMobile && <li>• 📈 Las medias móviles activas</li>}
+                    <li>• 🔍 POIs, FVGs, y estructuras de mercado</li>
+                    {!isMobile && <li>• 💡 El contexto completo del análisis</li>}
                   </ul>
-                  <p className="mt-3 text-xs text-sky-300">
-                    💬 Pregúntame sobre cualquier aspecto del gráfico o análisis. Por ejemplo:
-                    "¿Qué opinas del nivel actual?" o "¿Ves alguna confluencia importante?"
+                  <p className="mt-2 sm:mt-3 text-xs text-sky-300">
+                    💬 {isMobile ? "Pregúntame sobre el gráfico" : "Pregúntame sobre cualquier aspecto del gráfico o análisis"}
                   </p>
                 </div>
               </div>
             </div>
           )}
           {apiKeyPresent && chatError && (
-            <div className="p-3 text-sm text-red-300 bg-red-800 bg-opacity-50 rounded-lg border border-red-600">
+            <div className="p-2 sm:p-3 text-xs sm:text-sm text-red-300 bg-red-800 bg-opacity-50 rounded-lg border border-red-600 break-words">
               Error en Chat: {chatError}
             </div>
           )}
@@ -386,11 +397,11 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
               className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm shadow ${msg.sender === 'user'
+                className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm shadow break-words ${msg.sender === 'user'
                   ? `${userMessageBg} text-white`
                   : `${aiMessageBg} ${aiMessageText}`
                   }`}
-                dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/```json\s*\n?(.*?)\n?\s*```/gs, (match, p1) => `<pre class="bg-slate-900 text-slate-100 p-2 rounded overflow-x-auto text-xs">${p1.replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>`).replace(/`([^`]+)`/g, '<code class="bg-opacity-50 bg-black text-white px-1 py-0.5 rounded text-xs">$1</code>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }}
+                dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/```json\s*\n?(.*?)\n?\s*```/gs, (_, p1) => `<pre class="bg-slate-900 text-slate-100 p-2 rounded overflow-x-auto text-xs">${p1.replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>`).replace(/`([^`]+)`/g, '<code class="bg-opacity-50 bg-black text-white px-1 py-0.5 rounded text-xs">$1</code>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }}
               />
             </div>
           ))}
@@ -398,13 +409,13 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
         </div>
 
         {chatLoading && (
-          <div className={`px-3 sm:px-4 pb-1 text-xs text-center ${theme === 'dark' ? 'text-sky-300' : 'text-sky-600'}`}>
+          <div className={`px-2 sm:px-3 md:px-4 pb-1 text-xs text-center ${theme === 'dark' ? 'text-sky-300' : 'text-sky-600'}`}>
             TradeGuru IA está pensando...
           </div>
         )}
 
-        <div className={`p-3 sm:p-4 border-t ${inputBorderColor} flex-shrink-0`}>
-          <div className="flex items-start space-x-2">
+        <div className={`p-2 sm:p-3 md:p-4 border-t ${inputBorderColor} flex-shrink-0`}>
+          <div className="flex items-start space-x-1 sm:space-x-2">
             <textarea
               ref={chatInputRef}
               value={chatInputValue}
@@ -415,19 +426,19 @@ const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
                   handleChatSend();
                 }
               }}
-              placeholder={apiKeyPresent ? "🧠 TradeGuru AI puede ver tu gráfico - Pregúntame lo que quieras..." : "Se requiere Clave API para el chat"}
+              placeholder={apiKeyPresent ? (isMobile ? "Pregunta sobre el gráfico..." : "🧠 TradeGuru AI puede ver tu gráfico - Pregúntame lo que quieras...") : "Se requiere Clave API para el chat"}
               className={`flex-grow p-2 sm:p-2.5 border rounded-md shadow-sm text-xs sm:text-sm resize-none ${inputBgColor} ${chatTextColor} ${inputBorderColor} focus:ring-sky-500 focus:border-sky-500`}
-              rows={2}
+              rows={isMobile ? 1 : 2}
               disabled={chatLoading || !apiKeyPresent || (!!chatError && chatMessages.length === 0)}
               aria-label="Entrada de mensaje de chat"
             />
             <button
               onClick={handleChatSend}
               disabled={chatLoading || !chatInputValue.trim() || !apiKeyPresent || (!!chatError && chatMessages.length === 0)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 text-white font-semibold rounded-md shadow-sm text-xs sm:text-sm ${buttonBgColor} disabled:bg-slate-500 disabled:cursor-not-allowed`}
+              className={`px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 text-white font-semibold rounded-md shadow-sm text-xs sm:text-sm ${buttonBgColor} disabled:bg-slate-500 disabled:cursor-not-allowed flex-shrink-0`}
               aria-label="Enviar mensaje"
             >
-              Enviar
+              {isMobile ? "🚀" : "Enviar"}
             </button>
           </div>
         </div>
