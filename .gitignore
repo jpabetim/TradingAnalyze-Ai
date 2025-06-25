@@ -24,6 +24,9 @@ config/secrets.js
 **/api-keys.*
 **/secrets.*
 
+# Directorio anidado local
+tradingroad-ai/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
